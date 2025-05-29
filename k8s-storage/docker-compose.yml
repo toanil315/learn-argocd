@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  nfs-server:
+    image: itsthenetwork/nfs-server-alpine:11-arm
+    container_name: nfs-server
+    privileged: true
+    environment:
+      - SHARED_DIRECTORY=/nfs-share
+    volumes:
+      - nfsdata:/nfs-share
+    ports:
+      - "2049:2049"
+    restart: always
+    networks:
+      - kind # Make sure it's connected to the 'kind' network
+
+networks:
+  kind:
+    external: true
+
+volumes:
+  nfsdata:

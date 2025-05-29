@@ -1,0 +1,17 @@
+version: "3"
+services:
+  rancher-server:
+    image: rancher/rancher:v2.11.1
+    container_name: rancher-server
+    restart: unless-stopped
+    environment:
+      - CATTLE_SERVER=https://host.docker.internal
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data:/var/lib/rancher
+    privileged: true
+# After run, use command `docker logs rancher-server 2>&1 | grep "Bootstrap Password:"` to get rancher password
+# Password: ToanDangCong123456
+# IP: 192.168.1.118

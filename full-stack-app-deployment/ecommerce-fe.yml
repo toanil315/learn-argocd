@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: apps.deployment-ecommerce-fe-ecommerce-fe-deployment
+  name: ecommerce-fe-deployment
+  namespace: ecommerce
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-ecommerce-fe-ecommerce-fe-deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-ecommerce-fe-ecommerce-fe-deployment
+      namespace: ecommerce
+    spec:
+      affinity: {}
+      containers:
+        - image: ecommerce-fe:v4
+          imagePullPolicy: Never
+          name: ecommerce-fe
+          ports:
+            - containerPort: 80
+              name: tcp
+              protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-fe-cluster-ip
+  namespace: ecommerce
+spec:
+  ports:
+    - name: tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-ecommerce-fe-ecommerce-fe-deployment
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-fe-ingress
+  namespace: ecommerce
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: ecommerce-fe-cluster-ip
+                port:
+                  number: 80

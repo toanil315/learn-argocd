@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-serv-node-port
+  namespace: car-serv
+spec:
+  type: NodePort
+  ports:
+    - name: tcp
+      nodePort: 30080
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-car-serv-car-serv-deployment

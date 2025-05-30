@@ -2,12 +2,13 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: application-from-scratch
+  namespace: argocd
 spec:
   destination:
     namespace: default
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: <github path>
-    repoURL: <github repo url>
+    path: argo-cd/helm/nginx
+    repoURL: https://github.com/toanil315/learn-argocd.git
     targetRevision: main
